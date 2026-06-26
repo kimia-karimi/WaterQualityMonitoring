@@ -7,7 +7,7 @@ CLIENT_SECRET= "65af7106c92646bf9249d4e7d92f8f61"
 oauth = hydrovu_api.get_oauth_session(CLIENT_ID)
 hydrovu_api.get_access_token(oauth, CLIENT_ID, CLIENT_SECRET)
 
-results = run_hydrovu_for_targets(session, HYDROVU_TARGETS)
+results = run_hydrovu_for_targets(oauth, HYDROVU_TARGETS)
 
 # Print / save
 for r in results:
@@ -17,7 +17,7 @@ for r in results:
 
 for site in HYDROVU_TARGETS:
     payload = hydrovu_api.get_timeseries_payload(
-        session,
+        oauth,
         location_id=site["id"], 
         start_time=None,   # or "2025-01-01T00:00:00Z"
         end_time=None
