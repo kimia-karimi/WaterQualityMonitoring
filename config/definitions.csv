@@ -1,0 +1,80 @@
+parameter,unit,standard
+Temp,C,water_temp_C
+Temp,C,water_temp_C
+°C,°C,water_temp_C
+C,C,water_temp_C
+Temperature,C,water_temp_C
+Temperature,°C,water_temp_C
+Depth,meters,water_depth_m_nonvented
+Depth,m,water_depth_m_nonvented
+DEPm,DEPm,water_depth_m_nonvented
+Battery,V,instrument_battery_voltage
+Battery,volts,instrument_battery_voltage
+Cond,µS/cm,water_conductivity_uS/cm
+Cond,S/cm,water_conductivity_uS/cm
+Cond,mS/cm,water_conductivity_mS/cm
+Cond,uS/cm,water_conductivity_uS/cm
+nLF,Cond,water_nLF_conductivity_uS/cm
+SpCond,µS/cm,water_specific_conductivity_uS/cm
+SpCond,uS/cm,water_specific_conductivity_uS/cm
+SPC-uS/cm,SPC-uS/cm,water_specific_conductivity_uS/cm
+SpCond,mS/cm,water_specific_conductivity_mS/cm
+ODO%,%,water_DO_%
+%,Saturation O₂ (% sat),water_DO_%
+ODO,%,water_DO_%
+ODO,sat,water_DO_%
+ODO,local,water_DO_local
+ODO,mg/L,water_DO_mgl
+ODOsat,%,water_DO_%
+ODO Conc,mg/L,water_DO_mgl
+Salinity,(psu),water_salinity_PSU
+Salinity,ppt,water_salinity_PSU
+SAL-PSU,SAL-PSU,water_salinity_PSU
+Sal,psu,water_salinity_PSU
+TDS,g/L,water_tds_g/L
+Resistivity,KOhm.cm,water_resistivity_KOhm/cm
+pHmV,mV,water_ph_mv
+pH,none,water_ph
+pH,pH,water_ph
+NTU,none,water_turbidity
+NTU,NTU,water_turbidity
+DO Charge,none,DO_Chrg
+PressureA,psia,water_pressure_abs
+Chlorophyll,ug/L,water_chorophyll-a_ug/L
+DOsat,%,water_DO_%
+Dep25,meters,water_depth_m_nonvented
+IBatt,Volts,instrument_battery_voltage
+Turb,NTU,water_turbidity_NTU
+TDS,mg/L,water_tds_mgl
+ORP,mV,water_ORP_mV
+Fault,Code,sonde_fault_code
+Site,Name,station_name
+Cable,Pwr,sonde_cable_power_voltage
+Turbid+,NTU,water_turbidity_NTU
+Velocity-N,cm/s,northward_water_velocity_cm/s
+Velocity-E,cm/s,eastward_water_velocity_cm/s
+Bearing,degrees,bearing_degrees
+Speed,cm/s,water_speed_cm/s
+BGA-PE,µg/L,water_bga_pe
+BGA-PE,RFU,water_bga_pe_rfu
+TAL,RFU,water_bga_pe_rfu
+TAL,µg/L,water_bga_pe
+TAL,ug/L,water_bga_pe
+Chlorophyll,RFU,chlorophyll_a_rfu
+Chlorophyll,µg/L,chlorophyll_a
+RDO,%Sat,water_DO_%
+RDO Conc,mg/L,water_DO_mgl
+Actual Conductivity,µS/cm,water_conductivity_uS/cm
+AT500, DO Conc.,mg/L,water_DO_mgl
+AT500, DO Sat.,% sat,water_DO_%
+AT500, SpC,µS/cm,water_specific_conductivity_uS/cm
+AT500, Conductivity,µS/cm,water_conductivity_uS/cm
+AT500, Salinity,psu,water_salinity_PSU
+AT500, Water Temp,C,water_temp_C
+AT500, pH,pH,water_ph
+AT500, pH mV,mV,water_ph_mv
+AT500, ORP,mV,water_ORP_mV
+AT500, DO Partial Pressure,psi,water_DO_partial_pressure_psi
+AT500, Resistivity,Ω-cm,water_resistivity_ohmcm
+AT500, Water Density,g/cm³,water_density_gcm3
+AT500_Voltage,V,external_voltage_V
