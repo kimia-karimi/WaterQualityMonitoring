@@ -40,12 +40,6 @@ def fetch_location_info(oauth_session, station_id):
     
     # If no match is found
     return None
-def fetch_location_info(oauth_session, station_id):
-    response = oauth_session.get(
-        f"{BASE_URL}/locations/{station_id}"
-    )
-    response.raise_for_status()
-    return response.json()
 
 def fetch_friendly_names(oauth_session):
     return oauth_session.get(f"{BASE_URL}/sispec/friendlynames").json()
@@ -103,7 +97,7 @@ def flatten_into_rows(location_info, friendly_names):
     return data_rows_by_timestamp, parameter_col_index
 
 
-def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time=None):
+def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time=None, meta=None):
     """
     Returns canonical payload for ingestion / CSV generation
     """
@@ -116,10 +110,13 @@ def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time
 
     rows_by_ts, parameters = flatten_into_rows(location_data, friendly_names)
 
-    location_meta = fetch_location_info(oauth_session, location_id)
+    #location_meta = fetch_location_info(oauth_session, location_id)
 
-    latitude = location_meta.get("gps", {}).get("latitude")
-    longitude = location_meta.get("gps", {}).get("longitude")
+    #latitude = location_meta.get("gps", {}).get("latitude")
+    #longitude = location_meta.get("gps", {}).get("longitude")
+    location_meta = meta if meta else {"name": "Unknown", "id": location_id}
+    latitude = meta.get("latitude") if meta else None
+    longitude = meta.get("longitude") if meta else None
 
     return {
         "rows_by_ts": rows_by_ts,

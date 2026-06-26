@@ -13,7 +13,14 @@ def run_hydrovu_for_targets(session, targets, start=None, end=None):
             session,
             location_id=site["id"],
             start_time=start,
-            end_time=end
+            end_time=end,
+            meta={
+        "name": site["name"],
+        "id": site["id"],
+        "latitude": site["latitude"],
+        "longitude": site["longitude"]
+        }
+
         )
 
         results.append({
