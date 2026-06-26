@@ -53,4 +53,4 @@ def rows_to_csv_payload(payload, default_depth_m=None):
     text.detach()
     buff.seek(0)
 
-    return writer
+    return buff
