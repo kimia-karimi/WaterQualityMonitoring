@@ -42,7 +42,7 @@ def fetch_location_info(oauth_session, station_id):
     return None
 def fetch_location_info(oauth_session, station_id):
     response = oauth_session.get(
-        f"{BASE_URL}/locations/{location_id}"
+        f"{BASE_URL}/locations/{station_id}"
     )
     response.raise_for_status()
     return response.json()
