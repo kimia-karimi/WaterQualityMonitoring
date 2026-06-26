@@ -14,7 +14,7 @@ results = run_hydrovu_for_targets(oauth, HYDROVU_TARGETS)
 # Print / save
 for r in results:
     print(f"\n--- Station {r['id']} ---\n")
-    print(r["csv"].getvalue().decode("utf-8"))
+    #print(r["csv"].getvalue().decode("utf-8"))
 
 
 for site in HYDROVU_TARGETS:
@@ -27,7 +27,7 @@ for site in HYDROVU_TARGETS:
 
 csv_buffer = rows_to_csv_payload(payload, default_depth_m=1.5)
 
-print(csv_buffer.getvalue().decode("utf-8"))
-
+with open(f"hydrovu_{site['id']}.csv", "wb") as f:
+    f.write(csv_buffer.getvalue())
 
 
