@@ -52,4 +52,4 @@ def rows_to_csv_payload(payload, default_depth_m=None):
     #text.flush()
     #buff.seek(0)
 
-    return buff
+    return writer
