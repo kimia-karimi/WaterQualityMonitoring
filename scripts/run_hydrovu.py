@@ -24,6 +24,13 @@ for site in HYDROVU_TARGETS:
         start_time=None,   # or "2025-01-01T00:00:00Z"
         end_time=None
     )
+    payload["location_meta"] = {
+    "name": site["name"],
+    "id": site["id"]
+    }
+    payload["latitude"] = site["latitude"]
+    payload["longitude"] = site["longitude"]
+
 
 csv_buffer = rows_to_csv_payload(payload, default_depth_m=1.5)
 
