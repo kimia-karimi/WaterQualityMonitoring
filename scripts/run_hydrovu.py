@@ -16,7 +16,9 @@ for r in results:
 for site in HYDROVU_TARGETS:
     payload = hydrovu_api.get_timeseries_payload(
         session,
-        location_id=site["id"]
+        location_id=site["id"], 
+        start_time=None,   # or "2025-01-01T00:00:00Z"
+        end_time=None
     )
 
 csv_buffer = rows_to_csv_payload(payload, default_depth_m=1.5)
