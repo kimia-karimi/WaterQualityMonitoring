@@ -40,7 +40,12 @@ def fetch_location_info(oauth_session, station_id):
     
     # If no match is found
     return None
-
+def fetch_location_info(oauth_session, station_id):
+    response = oauth_session.get(
+        f"{BASE_URL}/locations/{location_id}"
+    )
+    response.raise_for_status()
+    return response.json()
 
 def fetch_friendly_names(oauth_session):
     return oauth_session.get(f"{BASE_URL}/sispec/friendlynames").json()
