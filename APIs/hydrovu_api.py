@@ -25,6 +25,9 @@ def fetch_all_locations(oauth_session):
             break
     return locations
 
+session= get_oauth_session(client_id)
+session= get_access_token(session, client_id, client_secret)
+print(fetch_all_locations(session))
 #def fetch_location_info(oauth_session, location_id):
     #response = oauth_session.get(f"{BASE_URL}/locations/{location_id}")
     #return response.json()
