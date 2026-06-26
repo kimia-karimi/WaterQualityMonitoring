@@ -4,6 +4,8 @@ from requests_oauthlib import OAuth2Session
 
 TOKEN_URL = "https://www.hydrovu.com/public-api/oauth/token"
 BASE_URL = "https://www.hydrovu.com/public-api/v1"
+client_id= "TWDB"
+client_secret= "65af7106c92646bf9249d4e7d92f8f61"
 
 def get_oauth_session(client_id):
     client = BackendApplicationClient(client_id=client_id)
