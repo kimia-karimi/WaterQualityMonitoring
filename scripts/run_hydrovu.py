@@ -1,11 +1,12 @@
-from APIs import hydrovu_api
+from config.hydrovu_targets import HYDROVU_TARGETS
 from processing.payload_to_csv import rows_to_csv_payload
 from processing.hydrovu_runner import run_hydrovu_for_targets
+from APIs.hydrovu_api import get_oauth_session
 
 CLIENT_ID= "TWDB"
 CLIENT_SECRET= "65af7106c92646bf9249d4e7d92f8f61"
-oauth = hydrovu_api.get_oauth_session(CLIENT_ID)
-hydrovu_api.get_access_token(oauth, CLIENT_ID, CLIENT_SECRET)
+oauth = APIs.hydrovu_api.get_oauth_session(CLIENT_ID)
+APIs.hydrovu_api.get_access_token(oauth, CLIENT_ID, CLIENT_SECRET)
 
 results = run_hydrovu_for_targets(oauth, HYDROVU_TARGETS)
 
@@ -16,7 +17,7 @@ for r in results:
 
 
 for site in HYDROVU_TARGETS:
-    payload = hydrovu_api.get_timeseries_payload(
+    payload = APIs.hydrovu_api.get_timeseries_payload(
         oauth,
         location_id=site["id"], 
         start_time=None,   # or "2025-01-01T00:00:00Z"
