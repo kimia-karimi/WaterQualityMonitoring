@@ -49,7 +49,8 @@ def rows_to_csv_payload(payload, default_depth_m=None):
     for ts in sorted(rows_by_ts.keys()):
         writer.writerow([ts] + rows_by_ts[ts])
 
-    #text.flush()
-    #buff.seek(0)
+    text.flush()
+    text.detach()
+    buff.seek(0)
 
     return writer
