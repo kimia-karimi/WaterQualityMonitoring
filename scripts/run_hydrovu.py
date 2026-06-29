@@ -6,8 +6,8 @@ from APIs.hydrovu_api import get_oauth_session
 from APIs.hydrovu_api import get_timeseries_payload
 from APIs.hydrovu_api import get_access_token
 from APIs.hydrovu_api import fetch_friendly_names
-
 from APIs.hydrovu_api import fetch_all_locations
+from config.station_map import build_output_filename
 
 def get_all_locations(session):
     return fetch_all_locations(session)
@@ -74,9 +74,12 @@ def main():
 
             )
         csv_buffer = rows_to_csv_payload(payload, default_depth_m=None)
+        filename = build_output_filename(location_id, start, end)
+        
 
-        with open(f"hydrovu_{loc['id']}.csv", "wb") as f:
+        with open(filename, "wb") as f:
                 f.write(csv_buffer.getvalue())
+        print(f"Saved: {filename}")
 
 
     
