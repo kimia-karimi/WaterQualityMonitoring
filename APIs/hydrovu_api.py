@@ -122,7 +122,7 @@ def flatten_into_rows(location_info, friendly_names):
             if dt_str not in data_rows_by_timestamp:
                 data_rows_by_timestamp[dt_str] = [None for _ in parameter_col_index]
             col_info = parameter_col_index[parameter_id]
-            data_rows_by_timestamp[dt_str][col_info['columnIndex']] = datum.get['value']
+            data_rows_by_timestamp[dt_str][col_info['columnIndex']] = datum.get('value')
 
     return data_rows_by_timestamp, parameter_col_index
 
