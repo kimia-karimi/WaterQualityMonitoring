@@ -25,5 +25,5 @@ python -m scripts.run_hydrovu -all
 ## Run for specific stations:
 python -m scripts.run_hydrovu -site 6387509350170624 5106941840719872
 
-## with time filtering:
+- with time filtering:
 python -m scripts.run_hydrovu -site 6387509350170624 5106941840719872 -start 2026-01-01 -end 2026-06-02
