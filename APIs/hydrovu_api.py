@@ -2,11 +2,16 @@ from datetime import datetime, timezone
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
+import os
+
+
+
 TOKEN_URL = "https://www.hydrovu.com/public-api/oauth/token"
 BASE_URL = "https://www.hydrovu.com/public-api/v1"
 client_id= "TWDB"
 client_secret= "65af7106c92646bf9249d4e7d92f8f61"
-
+CLIENT_ID = os.environ.get("HYDROVU_CLIENT_ID")
+CLIENT_SECRET = os.environ.get("HYDROVU_CLIENT_SECRET")
 # --------------------------------------------------
 # AUTHENTICATION
 # --------------------------------------------------
