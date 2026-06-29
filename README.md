@@ -16,7 +16,9 @@ This repository provides a clean, reproducible pipeline to retrieve time series 
 - Outputs standardized CSV (no database dependency)
 - Efficient API usage 
 ---
-
+## How to use
+conda env create -f environment.yml
+conda activate hydrovu-env
 
 
 ## Run for all stations:
