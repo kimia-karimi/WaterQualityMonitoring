@@ -27,6 +27,16 @@ def main():
 
     parser.add_argument("-start", type=str, required=True, help="Start time in ISO format (e.g., 2025-01-01T00:00:00Z)")
     parser.add_argument("-end", type=str, required=True, help="End time in ISO format (e.g., 2025-01-02T00:00:00Z)")
+    start = None
+    end = None
+
+    if args.start:
+        start = args.start + "T00:00:00Z"
+
+    if args.end:
+        end = args.end + "T23:59:59Z"
+
+    
     args = parser.parse_args()
     CLIENT_ID= "TWDB"
     CLIENT_SECRET= "65af7106c92646bf9249d4e7d92f8f61"
