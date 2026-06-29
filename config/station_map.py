@@ -25,3 +25,21 @@ def normalize_name(name: str) -> str:
     Clean filename-safe name
     """
     return name.replace(" ", "").replace("/", "_")
+#Move filename logic into a reusable function
+def build_output_filename(location_id, start=None, end=None):
+    name = normalize_name(get_station_name(location_id))
+
+    def clean(ts):
+        if not ts:
+            return None
+        return ts[:10].replace("-", "")
+
+    start_s = clean(start)
+    end_s = clean(end)
+
+    if start_s and end_s:
+        return f"{name}_{start_s}_{end_s}.csv"
+    elif start_s:
+        return f"{name}_{start_s}.csv"
+    else:
+        return f"{name}.csv"
