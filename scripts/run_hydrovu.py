@@ -7,10 +7,10 @@ from APIs.hydrovu_api import get_timeseries_payload
 from APIs.hydrovu_api import get_access_token
 from APIs.hydrovu_api import fetch_friendly_names
 
-
+from APIs.hydrovu_api import fetch_all_locations
 
 def get_all_locations(session):
-    return hydrovu_api.fetch_all_locations(session)
+    return fetch_all_locations(session)
 
 
 def filter_locations(all_locs, ids):
