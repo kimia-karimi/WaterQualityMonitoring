@@ -3,7 +3,7 @@ Sonde Data retrieval
 
 # HydroVu Data Retrieval (CSV Generator)
 
-This repository provides a clean, reproducible pipeline to retrieve time series data from the HydroVu API and export it into a CSV format compatible with WDfT ingestion workflows.
+This repository provides a clean, reproducible pipeline to retrieve time series data from the HydroVu API and export it into a CSV format.
 
 ---
 
