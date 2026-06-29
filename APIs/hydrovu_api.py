@@ -7,12 +7,20 @@ BASE_URL = "https://www.hydrovu.com/public-api/v1"
 client_id= "TWDB"
 client_secret= "65af7106c92646bf9249d4e7d92f8f61"
 
+# --------------------------------------------------
+# AUTHENTICATION
+# --------------------------------------------------
+
 def get_oauth_session(client_id):
     client = BackendApplicationClient(client_id=client_id)
     return OAuth2Session(client=client)
 
 def get_access_token(oauth_session, client_id, client_secret):
     return oauth_session.fetch_token(token_url=TOKEN_URL, client_id=client_id, client_secret=client_secret)
+
+# --------------------------------------------------
+# LOCATION DISCOVERY 
+# --------------------------------------------------
 
 def fetch_all_locations(oauth_session):
     locations = []
@@ -25,9 +33,21 @@ def fetch_all_locations(oauth_session):
             break
     return locations
 
-#def fetch_location_info(oauth_session, location_id):
-    #response = oauth_session.get(f"{BASE_URL}/locations/{location_id}")
-    #return response.json()
+
+# --------------------------------------------------
+# DATA RETRIEVAL
+# --------------------------------------------------
+
+def _to_epoch(ts):
+    """Convert ISO string -> epoch seconds if needed"""
+    if isinstance(ts, str):
+        return int(
+            datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ")
+            .replace(tzinfo=timezone.utc)
+            .timestamp()
+        )
+    return ts
+
 
 def fetch_location_info(oauth_session, station_id):
     # Get all locations
@@ -42,17 +62,23 @@ def fetch_location_info(oauth_session, station_id):
     return None
 
 def fetch_friendly_names(oauth_session):
-    return oauth_session.get(f"{BASE_URL}/sispec/friendlynames").json()
+    response = oauth_session.get(f"{BASE_URL}/sispec/friendlynames")
+    response.raise_for_status()  # Raise an error if the request was unsuccessful
+    return response.json()
 
 
 def fetch_all_data_for_location(oauth_session, location_id, start_time=None, end_time=None):
     merged_data = {'parameters': []}
     page = None    
     #Convert ISO 8601 to epoch if needed
-    if isinstance(start_time, str):
-        start_time = int(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp())
-    if isinstance(end_time, str):
-        end_time = int(datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp())
+    #if isinstance(start_time, str):
+        #start_time = int(datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp())
+    #if isinstance(end_time, str):
+        #end_time = int(datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp())
+    
+    start_time = _to_epoch(start_time)
+    end_time = _to_epoch(end_time)
+
     while True:
         params = {}
         if start_time: params['startTime'] = str(start_time)
@@ -67,10 +93,14 @@ def fetch_all_data_for_location(oauth_session, location_id, start_time=None, end
             break
     return merged_data
 
+# --------------------------------------------------
+# TRANSFORMATION
+# --------------------------------------------------
+
 def flatten_into_rows(location_info, friendly_names):
     parameter_col_index = {}
     index_counter = 0
-    for parameter in location_info['parameters']:
+    for parameter in location_info.get('parameters', []):
         if parameter['parameterId'] not in parameter_col_index:
             parameter_name = friendly_names['parameters'].get(parameter['parameterId'], parameter['parameterId'])
             unit_name = friendly_names['units'].get(parameter['unitId'], parameter['unitId'])
@@ -82,9 +112,9 @@ def flatten_into_rows(location_info, friendly_names):
             index_counter += 1
 
     data_rows_by_timestamp = {}
-    for parameter in location_info['parameters']:
+    for parameter in location_info.get('parameters', []):
         parameter_id = parameter['parameterId']
-        for datum in parameter['readings']:
+        for datum in parameter('readings',[]):
             timestamp = datum['timestamp']
             if timestamp is None:
                 continue
@@ -97,7 +127,11 @@ def flatten_into_rows(location_info, friendly_names):
     return data_rows_by_timestamp, parameter_col_index
 
 
-def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time=None, meta=None):
+# --------------------------------------------------
+# MAIN PAYLOAD FUNCTION 
+# --------------------------------------------------
+
+def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time=None, meta=None, friendly_names=None):
     """
     Returns canonical payload for ingestion / CSV generation
     """
@@ -106,7 +140,8 @@ def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time
         oauth_session, location_id, start_time, end_time
     )
 
-    friendly_names = fetch_friendly_names(oauth_session)
+    if friendly_names is None:
+        friendly_names = fetch_friendly_names(oauth_session)
 
     rows_by_ts, parameters = flatten_into_rows(location_data, friendly_names)
 
@@ -121,10 +156,7 @@ def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time
     return {
         "rows_by_ts": rows_by_ts,
         "parameters": parameters,
-        "location_meta": {
-            "name": location_meta.get("name", "Unknown"),
-            "id": location_id,
-        },
+        "location_meta": location_meta,
         "latitude": latitude,
         "longitude": longitude,
     }
