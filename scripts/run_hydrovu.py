@@ -60,7 +60,7 @@ def main():
             }, friendly_names=friendly_names 
 
             )
-        csv_buffer = rows_to_csv_payload(payload, default_depth_m=1.5)
+        csv_buffer = rows_to_csv_payload(payload, default_depth_m=None)
 
         with open(f"hydrovu_{loc['id']}.csv", "wb") as f:
                 f.write(csv_buffer.getvalue())
