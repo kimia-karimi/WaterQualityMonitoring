@@ -25,8 +25,8 @@ def main():
     parser.add_argument("-all", action="store_true", help="Process all HydroVu locations")
     parser.add_argument("-site", nargs="+", type=int, help="Specify location IDs")
 
-    parser.add_argument("-start", type=str, required=True, help="Start time in ISO format (e.g., 2025-01-01T00:00:00Z)")
-    parser.add_argument("-end", type=str, required=True, help="End time in ISO format (e.g., 2025-01-02T00:00:00Z)")
+    parser.add_argument("-start", type=str, help="Start time in ISO format (e.g., 2025-01-01T00:00:00Z)")
+    parser.add_argument("-end", type=str, help="End time in ISO format (e.g., 2025-01-02T00:00:00Z)")
     args = parser.parse_args()
     start = None
     end = None
