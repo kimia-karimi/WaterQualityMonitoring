@@ -56,12 +56,12 @@ def main():
         csv_buffer = rows_to_csv_payload(payload, default_depth_m=None)
 
         # ✅ build filename
-        filename = build_output_filename(location_id, start, end)
+        #filename = build_output_filename(location_id, start, end)
+        filename = f"{get_station_name(location_id)}_all.csv"
+        append_csv(filename, csv_buffer)
 
-        with open(filename, "wb") as f:
-            f.write(csv_buffer.getvalue())
 
-        print(f"Saved: {filename}")
+        print(f"Updated: {filename}")
 
 
 if __name__ == "__main__":
