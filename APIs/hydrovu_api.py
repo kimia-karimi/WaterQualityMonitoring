@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 import os
+import subprocess
 
 TOKEN_URL = "https://www.hydrovu.com/public-api/oauth/token"
 BASE_URL = "https://www.hydrovu.com/public-api/v1"
@@ -192,3 +193,8 @@ def append_csv(filename, csv_buffer):
     with open(filename, "a", newline="") as f:
         for line in data_lines:
             f.write(line + "\n")
+
+
+def upload_to_s3(filename):
+    bucket_path = f"s3://midgewater.twdb.texas.gov/{filename}"
+    subprocess.run(["aws", "s3", "cp", filename, bucket_path], check=True)
