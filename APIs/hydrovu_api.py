@@ -1,10 +1,7 @@
 from datetime import datetime, timezone
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
-
 import os
-
-
 
 TOKEN_URL = "https://www.hydrovu.com/public-api/oauth/token"
 BASE_URL = "https://www.hydrovu.com/public-api/v1"
@@ -165,3 +162,33 @@ def get_timeseries_payload(oauth_session, location_id, start_time=None, end_time
         "latitude": latitude,
         "longitude": longitude,
     }
+
+def append_csv(filename, csv_buffer):
+    """
+    Append new CSV rows to existing file safely
+    """
+
+    new_content = csv_buffer.getvalue().decode("utf-8").splitlines()
+
+    # If file doesn't exist → write full file
+    if not os.path.exists(filename):
+        with open(filename, "w", newline="") as f:
+            f.write("\n".join(new_content) + "\n")
+        return
+
+    # If exists → append only DATA rows (skip metadata + header)
+    with open(filename, "r") as f:
+        existing_lines = f.readlines()
+
+    # Find where data starts in new CSV
+    header_index = None
+    for i, line in enumerate(new_content):
+        if line.startswith('"Date Time"'):
+            header_index = i
+            break
+
+    data_lines = new_content[header_index + 1:]
+
+    with open(filename, "a", newline="") as f:
+        for line in data_lines:
+            f.write(line + "\n")
