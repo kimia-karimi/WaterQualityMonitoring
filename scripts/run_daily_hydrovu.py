@@ -62,6 +62,7 @@ def main():
 
 
         print(f"Updated: {filename}")
+        upload_to_s3(filename)
 
 
 if __name__ == "__main__":
