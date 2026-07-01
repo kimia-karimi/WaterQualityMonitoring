@@ -1,0 +1,115 @@
+config = """
+    contexts:
+      - streams:
+          Temperature (C):
+            qartod:
+              aggregate:
+              gross_range_test:
+                fail_span: [-5, 50]        # °C
+                suspect_span: [-2, 40]
+              spike_test:
+                suspect_threshold: 0.75     # °C
+                fail_threshold: 1.25
+              rate_of_change_test:
+                threshold: 2.0              # °C per sample
+              flat_line_test:
+                tolerance: 0.02             # °C
+                suspect_threshold: 7200    # 8 observations in 15-minute interval, equal to 2 hrs (seconds)
+                fail_threshold: 14400       # 16 observations (seconds)
+
+          Salinity (psu):
+            qartod:
+              aggregate:
+              gross_range_test:
+                fail_span: [0, 350]          # psu #manufacturer range
+                suspect_span: [0.1, 70]
+              spike_test:
+                suspect_threshold: 4.0       # psu (3* spike 99th percentile is ~9, which is a bit too high)
+                fail_threshold: 7.0
+              rate_of_change_test:
+                threshold: 2.0               # psu per sample
+              flat_line_test:
+                tolerance: 0.05              # psu
+                suspect_threshold: 7200
+                fail_threshold: 14400
+
+          DO (mg/L):
+            qartod:
+              aggregate:
+              gross_range_test:
+                fail_span: [0, 25]          # mg/L
+                suspect_span: [0, 20]
+              spike_test:
+                suspect_threshold: 2.0       # mg/L
+                fail_threshold: 3.4
+              rate_of_change_test:
+                threshold: 2.0               # mg/L per sample
+              flat_line_test:
+                tolerance: 0.05              # mg/L
+                suspect_threshold: 7200
+                fail_threshold: 14400
+
+          pH (pH):
+            qartod:
+              aggregate:
+              gross_range_test:
+                fail_span: [5.5, 10.5]      # pH units
+                suspect_span: [6, 9.5]
+              spike_test:
+                suspect_threshold: 0.2       # pH units
+                fail_threshold: 0.5
+              rate_of_change_test:
+                threshold: 0.3               # pH units per sample
+              flat_line_test:
+                tolerance: 0.02              # pH units
+                suspect_threshold: 7200
+                fail_threshold: 14400
+
+          Chl-a Fluorescence (RFU):
+            qartod:
+              aggregate:
+              gross_range_test:
+                fail_span: [0, 100]         # RFU (tune to sensor range)
+                suspect_span: [0, 50]
+              spike_test:
+                suspect_threshold: 5         # RFU
+                fail_threshold: 15
+              rate_of_change_test:
+                threshold: 10                # RFU per sample
+              flat_line_test:
+                tolerance: 0.01              # RFU
+                suspect_threshold: 7200
+                fail_threshold: 14400
+
+          Actual Conductivity (µS/cm):
+            qartod:
+              aggregate:
+              gross_range_test:
+                fail_span: [0, 100000]       # µS/cm
+                suspect_span: [50, 80000]
+              spike_test: 
+                suspect_threshold: 500       # µS/cm
+                fail_threshold: 2000
+              rate_of_change_test:
+                threshold: 2000              # µS/cm per sample
+              flat_line_test:
+                tolerance: 10                # µS/cm
+                suspect_threshold: 7200
+                fail_threshold: 14400
+
+          Specific Conductivity (µS/cm):
+            qartod:
+              aggregate:
+              gross_range_test:
+                fail_span: [0, 80000]       # µS/cm
+                suspect_span: [50, 70000]
+              spike_test:
+                suspect_threshold: 500       # µS/cm
+                fail_threshold: 2000
+              rate_of_change_test:
+                threshold: 2000              # µS/cm per sample
+              flat_line_test:
+                tolerance: 10                # µS/cm
+                suspect_threshold: 7200
+                fail_threshold: 14400
+"""
