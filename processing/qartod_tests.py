@@ -385,7 +385,7 @@ df_qc, summary = run_qartod(
 )
 
 # Save output
-df_qc.to_csv(r"T:\CoastalScience\Users\KKarimi\Git\WaterQualityMonitoring\Corpus_Christi_Bay_Buoy_5094472985673728_qartod.csv")
+df_qc.to_csv(r"T:\CoastalScience\Users\KKarimi\Git\WaterQualityMonitoring\Corpus_Christi_Bay_Buoy_5094472985673728_qartod.csv",index=False)
 
 
 # Print run summary
