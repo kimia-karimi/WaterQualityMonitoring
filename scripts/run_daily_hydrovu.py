@@ -1,11 +1,7 @@
 from datetime import datetime, timedelta
 from config.station_map import build_output_filename, STATION_NAME_MAP
-
-from processing.payload_to_csv import rows_to_csv_payload
-from APIs.hydrovu_api import get_oauth_session
-from APIs.hydrovu_api import get_timeseries_payload
-from APIs.hydrovu_api import get_access_token
-from APIs.hydrovu_api import fetch_friendly_names
+from processing.payload_to_csv import rows_to_csv_payload, payload_to_dataframe
+from APIs.hydrovu_api import get_oauth_session, get_timeseries_payload, get_access_token, fetch_friendly_names, get_station_name, upload_to_s3, append_csv
 import os
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -54,7 +50,7 @@ def main():
 
         # ✅ generate CSV
         csv_buffer = rows_to_csv_payload(payload, default_depth_m=None)
-
+        print(type(csv_buffer))
         # ✅ build filename
         #filename = build_output_filename(location_id, start, end)
         filename = f"{get_station_name(location_id)}_all.csv"
@@ -63,6 +59,11 @@ def main():
 
         print(f"Updated: {filename}")
         upload_to_s3(filename)
+
+        df = payload_to_dataframe(payload)
+        df = run_qartod(df, config)
+        save_csv(df)
+
 
 
 if __name__ == "__main__":

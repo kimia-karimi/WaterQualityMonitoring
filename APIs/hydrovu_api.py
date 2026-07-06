@@ -198,3 +198,6 @@ def append_csv(filename, csv_buffer):
 def upload_to_s3(filename):
     bucket_path = f"s3://midgewater.twdb.texas.gov/{filename}"
     subprocess.run(["aws", "s3", "cp", filename, bucket_path], check=True)
+
+
+

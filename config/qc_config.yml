@@ -1,9 +1,7 @@
-config = """
-    contexts:
+  contexts:
       - streams:
           Temperature (C):
             qartod:
-              aggregate:
               gross_range_test:
                 fail_span: [-5, 50]        # °C
                 suspect_span: [-2, 40]
@@ -19,7 +17,6 @@ config = """
 
           Salinity (psu):
             qartod:
-              aggregate:
               gross_range_test:
                 fail_span: [0, 350]          # psu #manufacturer range
                 suspect_span: [0.1, 70]
@@ -35,7 +32,6 @@ config = """
 
           DO (mg/L):
             qartod:
-              aggregate:
               gross_range_test:
                 fail_span: [0, 25]          # mg/L
                 suspect_span: [0, 20]
@@ -51,7 +47,6 @@ config = """
 
           pH (pH):
             qartod:
-              aggregate:
               gross_range_test:
                 fail_span: [5.5, 10.5]      # pH units
                 suspect_span: [6, 9.5]
@@ -67,7 +62,6 @@ config = """
 
           Chl-a Fluorescence (RFU):
             qartod:
-              aggregate:
               gross_range_test:
                 fail_span: [0, 100]         # RFU (tune to sensor range)
                 suspect_span: [0, 50]
@@ -83,7 +77,6 @@ config = """
 
           Actual Conductivity (µS/cm):
             qartod:
-              aggregate:
               gross_range_test:
                 fail_span: [0, 100000]       # µS/cm
                 suspect_span: [50, 80000]
@@ -99,7 +92,6 @@ config = """
 
           Specific Conductivity (µS/cm):
             qartod:
-              aggregate:
               gross_range_test:
                 fail_span: [0, 80000]       # µS/cm
                 suspect_span: [50, 70000]
@@ -112,4 +104,3 @@ config = """
                 tolerance: 10                # µS/cm
                 suspect_threshold: 7200
                 fail_threshold: 14400
-"""

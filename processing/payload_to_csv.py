@@ -1,5 +1,6 @@
 import io
 import csv
+import pandas as pd
 
 def build_metadata_block(location_meta, latitude, longitude):
     return [
@@ -54,3 +55,31 @@ def rows_to_csv_payload(payload, default_depth_m=None):
     buff.seek(0)
 
     return buff
+
+def payload_to_dataframe(payload, default_depth_m=None):
+
+    rows_by_ts = payload["rows_by_ts"]
+    parameters = payload["parameters"]
+
+    columns = build_columns(parameters)
+
+    records = []
+
+    for ts, values in rows_by_ts.items():
+
+        row = dict(zip(columns[1:], values))
+
+        row["timestamp"] = pd.to_datetime(ts)
+
+        if default_depth_m is not None:
+            row["Depth (m)"] = default_depth_m
+
+        records.append(row)
+
+    df = pd.DataFrame(records)
+
+    df = df.sort_values("timestamp")
+
+    df = df.set_index("timestamp")
+
+    return df
