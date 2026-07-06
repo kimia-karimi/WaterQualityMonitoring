@@ -1,10 +1,15 @@
 from datetime import datetime, timedelta
 from config.station_map import build_output_filename, STATION_NAME_MAP
-from processing.payload_to_csv import rows_to_csv_payload, payload_to_dataframe
+from processing.payload_to_csv import rows_to_csv_payload, payload_to_dataframe, append_or_replace_timeseries, dataframe_to_wide_output
 from APIs.hydrovu_api import get_oauth_session, get_timeseries_payload, get_access_token, fetch_friendly_names, get_station_name, upload_to_s3, append_csv
+from processing.qartod_tests import run_qartod
 import os
 import logging
 logging.basicConfig(level=logging.INFO)
+from pathlib import Path
+
+import yaml
+import pandas as pd
 
 
 CLIENT_ID = os.environ.get("HYDROVU_CLIENT_ID")
@@ -12,6 +17,37 @@ CLIENT_SECRET = os.environ.get("HYDROVU_CLIENT_SECRET")
 
 STATIONS = list(STATION_NAME_MAP.keys())
 
+CONFIG_PATH = Path("config/qc_config.yml")
+
+OUTPUT_DIR = Path(".")
+
+
+def add_station_metadata_to_qc(qc_long, location_id, station_name):
+    """
+    Add station metadata to long QARTOD output.
+
+    Output columns:
+        station_id
+        station_name
+        time
+        parameter
+        value
+        gross_range_test_qc
+        spike_test_qc
+        rate_of_change_test_qc
+        flat_line_test_qc
+        aggregate_qc
+    """
+
+    qc_long = qc_long.copy()
+
+    if qc_long.empty:
+        return qc_long
+
+    qc_long.insert(0, "station_id", location_id)
+    qc_long.insert(1, "station_name", station_name)
+
+    return qc_long
 
 def main():
     # ✅ time window: last 24 hours
@@ -27,6 +63,8 @@ def main():
 
     # ✅ cache friendly names once
     friendly_names = fetch_friendly_names(session)
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+            qc_config = yaml.safe_load(f)
 
     for location_id in STATIONS:
         print(f"Processing {location_id}...")
@@ -47,22 +85,68 @@ def main():
         if not payload["rows_by_ts"]:
             print(f"No data for {location_id}, skipping...")
             continue
-
+        # ✅ convert payload to wide dataframe (for qaqc)
+        df_wide = payload_to_dataframe(payload, default_depth_m=None)
+        if df_wide.empty:
+            logging.info(
+                "Payload converted to empty dataframe for %s (%s), skipping.",
+                get_station_name(location_id),
+                location_id,
+            )
+            continue
+        
+    
         # ✅ generate CSV
         csv_buffer = rows_to_csv_payload(payload, default_depth_m=None)
         print(type(csv_buffer))
         # ✅ build filename
-        #filename = build_output_filename(location_id, start, end)
+        filename = build_output_filename(location_id, start, end)
         filename = f"{get_station_name(location_id)}_all.csv"
         append_csv(filename, csv_buffer)
 
 
         print(f"Updated: {filename}")
         upload_to_s3(filename)
+        
+        
+        #qc_path = f"{get_station_name(location_id)}_qartod_long_all.csv"
+        # ✅ run QARTOD and save/append long QC table
+        
+        wide_output = dataframe_to_wide_output(
+            df=df_wide,
+            location_id=location_id,
+            station_name=get_station_name(location_id),
+        )
+        
 
-        df = payload_to_dataframe(payload)
-        df = run_qartod(df, config)
-        save_csv(df)
+
+        #df = run_qartod(df, config)
+        df_wide = payload_to_dataframe(payload)
+        
+        qc_long, summary = run_qartod(
+            df=df_wide,
+            qc_dict=qc_config,
+            include_aggregate=True,
+            verbose=True
+            )
+        qc_long = add_station_metadata_to_qc(
+            qc_long=qc_long,
+            location_id=location_id,
+            station_name=get_station_name(location_id),
+        )
+
+        qc_filename = f"{get_station_name(location_id)}_qartod_long_all.csv"
+        qc_path = OUTPUT_DIR / qc_filename
+
+        append_or_replace_timeseries(
+        new_df=qc_long,
+        output_path=qc_path,
+        time_col="time",
+        subset=["station_id", "parameter", "time"],
+    )
+        logging.info("Updated QARTOD long file: %s", qc_path)
+
+        
 
 
 

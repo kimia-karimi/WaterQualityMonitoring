@@ -1,7 +1,7 @@
 import io
 import csv
 import pandas as pd
-
+from pathlib import Path
 def build_metadata_block(location_meta, latitude, longitude):
     return [
         "Location Properties",
@@ -57,6 +57,15 @@ def rows_to_csv_payload(payload, default_depth_m=None):
     return buff
 
 def payload_to_dataframe(payload, default_depth_m=None):
+    
+    """
+    Convert HydroVu payload into a wide pandas DataFrame.
+
+    Output:
+        index = time
+        columns = HydroVu parameter names
+    """
+
 
     rows_by_ts = payload["rows_by_ts"]
     parameters = payload["parameters"]
@@ -83,3 +92,82 @@ def payload_to_dataframe(payload, default_depth_m=None):
     df = df.set_index("timestamp")
 
     return df
+
+
+
+def append_or_replace_timeseries(new_df, output_path, time_col="time", subset=None):
+    """
+    Append new data to an existing CSV, remove duplicates, sort by time,
+    and write back to disk.
+
+    For wide data:
+        subset = ["time"]
+
+    For long QC data:
+        subset = ["station_id", "parameter", "time"]
+    """
+
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if new_df.empty:
+        return
+
+    new_df = new_df.copy()
+
+    if time_col in new_df.columns:
+        new_df[time_col] = pd.to_datetime(new_df[time_col])
+
+    if output_path.exists():
+        old_df = pd.read_csv(output_path)
+
+        if time_col in old_df.columns:
+            old_df[time_col] = pd.to_datetime(old_df[time_col])
+
+        combined = pd.concat([old_df, new_df], ignore_index=True)
+    else:
+        combined = new_df
+
+    if subset is not None:
+        combined = combined.drop_duplicates(subset=subset, keep="last")
+    else:
+        combined = combined.drop_duplicates(keep="last")
+
+    if time_col in combined.columns:
+        combined = combined.sort_values(time_col)
+
+    combined.to_csv(output_path, index=False)
+
+
+
+def dataframe_to_wide_output(df, location_id, station_name):
+    """
+    Convert the payload dataframe into the appendable wide output table.
+
+    Output columns:
+        station_id
+        station_name
+        Date Time
+        parameter columns...
+    """
+
+    wide_df = df.copy()
+
+    if wide_df.empty:
+        return wide_df
+
+    wide_df = wide_df.reset_index()
+
+    # payload_to_dataframe uses index name "timestamp"
+    # after reset_index, the column is usually "timestamp"
+    if "timestamp" in wide_df.columns:
+        wide_df = wide_df.rename(columns={"timestamp": "Date Time"})
+    elif "time" in wide_df.columns:
+        wide_df = wide_df.rename(columns={"time": "Date Time"})
+    elif "index" in wide_df.columns:
+        wide_df = wide_df.rename(columns={"index": "Date Time"})
+
+    wide_df.insert(0, "station_id", location_id)
+    wide_df.insert(1, "station_name", station_name)
+
+    return wide_df
