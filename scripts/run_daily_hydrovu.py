@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from config.station_map import build_output_filename, STATION_NAME_MAP, get_station_names,find_candidate_locations
 from processing.payload_to_csv import rows_to_csv_payload, payload_to_dataframe, append_or_replace_timeseries, dataframe_to_wide_output
-from APIs.hydrovu_api import get_oauth_session, fetch_all_locations, get_timeseries_payload, get_access_token, fetch_friendly_names, get_station_name, upload_to_s3, append_csv
+from APIs.hydrovu_api import get_oauth_session, fetch_all_locations, get_timeseries_payload, get_access_token, fetch_friendly_names, upload_to_s3, append_csv
 from processing.qartod_tests import run_qartod
 import os
 import logging
