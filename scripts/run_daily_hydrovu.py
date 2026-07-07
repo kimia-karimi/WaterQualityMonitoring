@@ -90,6 +90,7 @@ def main():
     # ✅ authenticate once
     session = get_oauth_session(CLIENT_ID)
     get_access_token(session, CLIENT_ID, CLIENT_SECRET)
+    print(session.headers,CLIENT_ID, CLIENT_SECRET)
 
     # ✅ cache friendly names once
     friendly_names = fetch_friendly_names(session)
@@ -133,7 +134,7 @@ def main():
         if df_wide.empty:
             logging.info(
                 "Payload converted to empty dataframe for %s (%s), skipping.",
-                get_station_name(location_id),
+                get_station_names(location_id),
                 location_id,
             )
             continue
@@ -158,7 +159,7 @@ def main():
         wide_output = dataframe_to_wide_output(
             df=df_wide,
             location_id=location_id,
-            station_name=get_station_name(location_id),
+            station_name=get_station_names(location_id),
         )
         
 
