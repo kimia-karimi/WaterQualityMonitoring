@@ -357,7 +357,6 @@ def run_qartod(df, qc_dict, include_aggregate=True, verbose=True):
 with open(r"T:\CoastalScience\Users\KKarimi\Git\WaterQualityMonitoring\config\qc_config.yml", "r", encoding="utf-8") as f:
     qc_dict = yaml.safe_load(f)
 print(qc_dict["contexts"][0]["streams"]["Temperature (C)"]["qartod"])
-
 df = (
     pd.read_csv(r"C:\Users\kkarimi\OneDrive - The State of Texas, acting by and through the Department of Information Resources-5173968-TX-WDB\HydroVU\Output\Corpus_Christi_Bay_Buoy_5094472985673728.csv", parse_dates=["Date Time"])
       .rename(columns={
@@ -367,7 +366,7 @@ df = (
           "Chl-a Fluorescence (RFU)":"Chl-a Fluorescence (RFU)"
           
       })
-      index= False 
+      
       
 )
 
@@ -401,3 +400,92 @@ print(summary["failed_tests"])
 
 print("\nOutput preview:")
 print(df_qc.head())
+
+
+
+
+def main():
+
+    qc_config_path = (
+        r"T:\CoastalScience\Users\KKarimi\Git\WaterQualityMonitoring"
+        r"\config\qc_config.yml"
+    )
+
+    input_csv = (
+        r"C:\Users\kkarimi\OneDrive - The State of Texas, acting by and "
+        r"through the Department of Information Resources-5173968-TX-WDB"
+        r"\HydroVU\Output\Corpus_Christi_Bay_Buoy_5094472985673728.csv"
+    )
+
+    output_csv = (
+        r"T:\CoastalScience\Users\KKarimi\Git\WaterQualityMonitoring"
+        r"\Corpus_Christi_Bay_Buoy_5094472985673728_qartod_long.csv"
+    )
+
+    # Load YAML
+    with open(qc_config_path, "r", encoding="utf-8") as f:
+        qc_dict = yaml.safe_load(f)
+
+    print("Loaded QC config.")
+    print(qc_dict["contexts"][0]["streams"]["Temperature (C)"]["qartod"])
+
+    # Load data
+    df = (
+        pd.read_csv(
+            input_csv,
+            parse_dates=["Date Time"],
+            encoding="utf-8-sig",
+        )
+        .rename(columns={
+            "Date Time": "time",
+            "Specific Conductivity (ÂµS/cm)": "Specific Conductivity (µS/cm)",
+            "Actual Conductivity (ÂµS/cm)": "Actual Conductivity (µS/cm)",
+            "Chl-a Fluorescence (RFU)": "Chl-a Fluorescence (RFU)",
+        })
+        .set_index("time")
+        .sort_index()
+    )
+
+    df.index = pd.to_datetime(df.index)
+    df.columns = df.columns.str.strip()
+
+    print("\nInput dataframe preview:")
+    print(df.head())
+
+    print("\nInput columns:")
+    for col in df.columns:
+        print(repr(col))
+
+    # Run QARTOD
+    df_qc, summary = run_qartod(
+        df=df,
+        qc_dict=qc_dict,
+        include_aggregate=True,
+        verbose=True,
+    )
+
+    # Save long output
+    df_qc.to_csv(output_csv, index=False)
+
+    print("\nSaved long QC output to:")
+    print(output_csv)
+
+    print("\nTests successfully run:")
+    for item in summary["ran"]:
+        print(item)
+
+    print("\nMissing columns:")
+    print(summary["missing_columns"])
+
+    print("\nFailed tests:")
+    print(summary["failed_tests"])
+
+    print("\nOutput preview:")
+    print(df_qc.head(20))
+
+    print("\nOutput columns:")
+    print(df_qc.columns.tolist())
+
+
+if __name__ == "__main__":
+    main()
