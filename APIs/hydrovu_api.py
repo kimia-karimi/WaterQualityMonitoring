@@ -199,4 +199,17 @@ def upload_to_s3(filename):
     subprocess.run(["aws", "s3", "cp", filename, bucket_path], check=True)
 
 
+def get_last_timestamp(csv_file):
 
+    df = pd.read_csv(
+        csv_file,
+        skiprows=8  # skip metadata block
+    )
+
+    last_ts = pd.to_datetime(df["Date Time"]).max()
+
+    return (
+        last_ts
+        .tz_localize("UTC")
+        .strftime("%Y-%m-%dT%H:%M:%SZ")
+    )
