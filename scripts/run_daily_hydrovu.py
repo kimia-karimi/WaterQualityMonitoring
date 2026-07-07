@@ -111,10 +111,7 @@ def main():
             candidates,
             start=start,
             end=end,
-            meta={
-                "name": STATION_NAME_MAP.get(location_id),
-                "id": location_id
-            },
+            
             friendly_names=friendly_names
         )
 
