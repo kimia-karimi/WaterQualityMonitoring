@@ -141,7 +141,7 @@ def main():
         csv_buffer = rows_to_csv_payload(payload, default_depth_m=None)
         print(type(csv_buffer))
         # ✅ build filename
-        filename = build_output_filename(location_id, start, end)
+        #filename = build_output_filename(location_id, start, end)
         filename = Path(f"{location_id}_all.csv")
         if not filename.exists():
             start = "2026-01-01T00:00:00Z"
