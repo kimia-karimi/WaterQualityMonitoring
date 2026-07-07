@@ -109,8 +109,8 @@ def main():
         location,payload = find_active_location(
             session,
             candidates,
-            start_time=start,
-            end_time=end,
+            start=start,
+            end=end,
             meta={
                 "name": STATION_NAME_MAP.get(location_id),
                 "id": location_id
