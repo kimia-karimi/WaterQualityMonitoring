@@ -40,7 +40,7 @@ def find_candidate_locations(locations, station_name):
     return candidates
 #Move filename logic into a reusable function
 def build_output_filename(location_id, start=None, end=None):
-    name = normalize_name(get_station_names(location_id))
+    name = normalize_name(get_station_names())
 
     def clean(ts):
         if not ts:
