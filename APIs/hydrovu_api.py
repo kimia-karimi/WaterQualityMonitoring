@@ -215,3 +215,62 @@ def get_last_timestamp(csv_file):
         .tz_localize("UTC")
         .strftime("%Y-%m-%dT%H:%M:%SZ")
     )
+
+def add_station_metadata_to_qc(qc_long, location_id, station_name):
+    """
+    Add station metadata to long QARTOD output.
+
+    Output columns:
+        station_id
+        station_name
+        time
+        parameter
+        value
+        gross_range_test_qc
+        spike_test_qc
+        rate_of_change_test_qc
+        flat_line_test_qc
+        aggregate_qc
+    """
+
+    qc_long = qc_long.copy()
+
+    if qc_long.empty:
+        return qc_long
+
+    qc_long.insert(0, "station_id", location_id)
+    qc_long.insert(1, "station_name", station_name)
+
+    return qc_long
+
+def find_active_location(
+    session,
+    candidates,
+    start,
+    end,
+    friendly_names,
+):
+    """
+    Return the first location that contains data
+    within the requested time window.
+    """
+
+    for loc in candidates:
+
+        
+        payload = get_timeseries_payload(
+            session,
+            location_id=loc["id"],
+            start_time=start,
+            end_time=end,
+            meta={
+                "name":loc.get("name"),
+                "id": loc["id"]
+            },
+            friendly_names=friendly_names
+        )
+
+        if payload["rows_by_ts"]:
+            return loc, payload
+
+    return None, None

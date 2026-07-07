@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from config.station_map import build_output_filename, STATION_NAME_MAP, get_station_names,find_candidate_locations
 from processing.payload_to_csv import rows_to_csv_payload, payload_to_dataframe, append_or_replace_timeseries, dataframe_to_wide_output
-from APIs.hydrovu_api import get_oauth_session, fetch_all_locations, get_timeseries_payload, get_access_token, fetch_friendly_names, upload_to_s3, append_csv, get_last_timestamp
+from APIs.hydrovu_api import get_oauth_session, fetch_all_locations, get_timeseries_payload, get_access_token, fetch_friendly_names, upload_to_s3, append_csv, get_last_timestamp, find_active_location, add_station_metadata_to_qc
 from processing.qartod_tests import run_qartod
 import os
 import logging
@@ -21,64 +21,7 @@ CONFIG_PATH = Path("config/qc_config.yml")
 OUTPUT_DIR = Path(".")
 
 
-def add_station_metadata_to_qc(qc_long, location_id, station_name):
-    """
-    Add station metadata to long QARTOD output.
 
-    Output columns:
-        station_id
-        station_name
-        time
-        parameter
-        value
-        gross_range_test_qc
-        spike_test_qc
-        rate_of_change_test_qc
-        flat_line_test_qc
-        aggregate_qc
-    """
-
-    qc_long = qc_long.copy()
-
-    if qc_long.empty:
-        return qc_long
-
-    qc_long.insert(0, "station_id", location_id)
-    qc_long.insert(1, "station_name", station_name)
-
-    return qc_long
-
-def find_active_location(
-    session,
-    candidates,
-    start,
-    end,
-    friendly_names,
-):
-    """
-    Return the first location that contains data
-    within the requested time window.
-    """
-
-    for loc in candidates:
-
-        
-        payload = get_timeseries_payload(
-            session,
-            location_id=loc["id"],
-            start_time=start,
-            end_time=end,
-            meta={
-                "name":loc.get("name"),
-                "id": loc["id"]
-            },
-            friendly_names=friendly_names
-        )
-
-        if payload["rows_by_ts"]:
-            return loc, payload
-
-    return None, None
 def main():
     # ✅ time window: last 24 hours
     end_dt = datetime.utcnow()
@@ -104,6 +47,15 @@ def main():
         #print(f"Processing {location_id}...")
         candidates = find_candidate_locations(
             all_locations,location_id)
+        
+        filename = Path(f"{location_id}_all.csv")
+        if not filename.exists():
+             start = "2026-01-01T00:00:00Z"
+        else:
+             start = get_last_timestamp(filename)
+
+        end = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+
 
 
         location,payload = find_active_location(
@@ -142,14 +94,7 @@ def main():
         print(type(csv_buffer))
         # ✅ build filename
         #filename = build_output_filename(location_id, start, end)
-        filename = Path(f"{location_id}_all.csv")
-        if not filename.exists():
-            start = "2026-01-01T00:00:00Z"
-            end = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-
-        else:
-            start = get_last_timestamp(filename)
-            end = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        
 
 
         append_csv(filename, csv_buffer)
