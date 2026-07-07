@@ -8,16 +8,14 @@ Used for:
 """
 
 STATION_NAME_MAP = {
-    5106941840719872: "BaffinBay",
-    6387509350170624: "CCBay",
+    "CCBay": {
+        "hydrovu_names": ["default-1031419"],
+    },
+    "BaffinBay": {
+        "hydrovu_names": ["default-1031425"],
+    },
 }
 
-
-def get_station_name(location_id):
-    """
-    Safe lookup with fallback
-    """
-    return STATION_NAME_MAP.get(location_id, str(location_id))
 
 
 def normalize_name(name: str) -> str:
@@ -25,6 +23,21 @@ def normalize_name(name: str) -> str:
     Clean filename-safe name
     """
     return name.replace(" ", "").replace("/", "_")
+
+def get_station_names():
+    return list(STATION_NAME_MAP.keys())
+
+
+def find_candidate_locations(locations, station_name):
+    candidates = []
+
+    aliases = STATION_NAME_MAP[station_name]["hydrovu_names"]
+
+    for loc in locations:
+        if loc.get("name") in aliases:
+            candidates.append(loc)
+
+    return candidates
 #Move filename logic into a reusable function
 def build_output_filename(location_id, start=None, end=None):
     name = normalize_name(get_station_name(location_id))
