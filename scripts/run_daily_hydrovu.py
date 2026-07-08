@@ -100,7 +100,7 @@ def main():
 
 
         print(f"Updated: {filename}")
-        upload_to_s3(filename)
+        #upload_to_s3(filename)
         
         
         #qc_path = f"{get_station_name(location_id)}_qartod_long_all.csv"
