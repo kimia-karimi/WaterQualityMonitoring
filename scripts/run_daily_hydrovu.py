@@ -121,7 +121,7 @@ def main():
         qc_long = add_station_metadata_to_qc(
             qc_long=qc_long,
             location_id=location_id,
-            station_name={location["id"]},
+            station_name=location["id"],
         )
 
         qc_filename = f"{location_id}_qartod_long_all.csv"
