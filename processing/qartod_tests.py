@@ -159,8 +159,8 @@ def run_qartod(df, qc_dict, include_aggregate=True, verbose=True):
 
         parameter_test_flags = []
 
-        if verbose:
-            print(f"\nRunning QARTOD for: {parameter}")
+        #if verbose:
+            #print(f"\nRunning QARTOD for: {parameter}")
 
         # one dataframe per parameter
         param_result = pd.DataFrame({
