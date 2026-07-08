@@ -84,13 +84,13 @@ def payload_to_dataframe(payload, default_depth_m=None):
             row["Depth (m)"] = default_depth_m
 
         records.append(row)
-
+    df = pd.DataFrame(records)
     # Remove bad timestamps before setting index
     df = df.dropna(subset=["time"])
     df = df.sort_values("time")
     # Set actual timestamp as index
     df = df.set_index("time")
-    df = pd.DataFrame(records)
+    
 
     
     # Remove duplicate timestamps
