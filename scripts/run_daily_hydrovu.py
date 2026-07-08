@@ -33,7 +33,6 @@ def main():
     # ✅ authenticate once
     session = get_oauth_session(CLIENT_ID)
     get_access_token(session, CLIENT_ID, CLIENT_SECRET)
-    logging.info(session.headers,CLIENT_ID, CLIENT_SECRET)
 
     # ✅ cache friendly names once
     friendly_names = fetch_friendly_names(session)
