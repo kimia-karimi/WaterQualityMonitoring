@@ -78,21 +78,20 @@ def payload_to_dataframe(payload, default_depth_m=None):
 
         row = dict(zip(columns[1:], values))
 
-        row["time"] = pd.to_datetime(ts)
+        row["time"] = pd.to_datetime(ts, utc=True, errors="coerce")
 
         if default_depth_m is not None:
             row["Depth (m)"] = default_depth_m
 
         records.append(row)
 
+    # Remove bad timestamps before setting index
+    df = df.dropna(subset=["time"])
+    df = df.sort_values("time")
+    # Set actual timestamp as index
+    df = df.set_index("time")
     df = pd.DataFrame(records)
 
-    df = df.sort_values("time")
-    
-    df.index = pd.to_datetime(df.index, utc=True, errors="coerce")
-
-
-    df = df.set_index("time")
     
     # Remove duplicate timestamps
     df = df[~df.index.duplicated(keep="last")]
