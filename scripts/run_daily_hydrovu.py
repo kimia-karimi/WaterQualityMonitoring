@@ -106,11 +106,6 @@ def main():
         #qc_path = f"{get_station_name(location_id)}_qartod_long_all.csv"
         # ✅ run QARTOD and save/append long QC table
         
-        wide_output = dataframe_to_wide_output(
-            df=df_wide,
-            location_id=location_id,
-            station_name=get_station_names(location_id),
-        )
         
 
 
@@ -126,7 +121,7 @@ def main():
         qc_long = add_station_metadata_to_qc(
             qc_long=qc_long,
             location_id=location_id,
-            station_name=get_station_name(location_id),
+            station_name={location["id"]},
         )
 
         qc_filename = f"{location_id}_qartod_long_all.csv"
