@@ -62,7 +62,7 @@ def main():
             candidates,
             start=start,
             end=end,
-            
+            station_name=location_id,
             friendly_names=friendly_names
         )
 

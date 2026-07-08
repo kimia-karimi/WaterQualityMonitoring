@@ -247,6 +247,7 @@ def add_station_metadata_to_qc(qc_long, location_id, station_name):
 def find_active_location(
     session,
     candidates,
+    station_name,
     start,
     end,
     friendly_names,
@@ -254,9 +255,22 @@ def find_active_location(
     """
     Return the first location that contains data
     within the requested time window.
+    
+    Metadata Location Name will be:
+        <logical station name> <HydroVu location name>
+
+    Example:
+        BaffinBay default-1031425
+
     """
 
     for loc in candidates:
+        gps = loc.get("gps") or {}
+
+        hydrovu_name = loc.get("name", "UnknownHydroVuLocation")
+
+        combined_location_name = f"{station_name} {hydrovu_name}"
+
 
         
         payload = get_timeseries_payload(
@@ -266,12 +280,19 @@ def find_active_location(
             end_time=end,
             meta={
                 "name":loc.get("name"),
-                "id": loc["id"]
+                "id": loc["id"],
+                "latitude": gps.get("latitude"),
+                "longitude": gps.get("longitude"),
+
             },
             friendly_names=friendly_names
         )
 
         if payload["rows_by_ts"]:
+            payload["source_hydrovu_id"] = loc["id"]
+            payload["source_hydrovu_name"] = hydrovu_name
+            payload["logical_station_name"] = station_name
+
             return loc, payload
 
     return None, None
