@@ -173,25 +173,26 @@ def append_csv(filename, csv_buffer):
     new_content = csv_buffer.getvalue().decode("utf-8").splitlines()
 
     # If file doesn't exist → write full file
-    if not os.path.exists(filename):
-        with open(filename, "w", newline="") as f:
-            f.write("\n".join(new_content) + "\n")
+    if not filename.exists():
+        filename.write_text(
+            "\n".join(new_content) + "\n",
+            encoding="utf-8",
+        )
         return
 
-    # If exists → append only DATA rows (skip metadata + header)
-    with open(filename, "r") as f:
-        existing_lines = f.readlines()
-
+    
     # Find where data starts in new CSV
     header_index = None
     for i, line in enumerate(new_content):
         if line.startswith('"Date Time"'):
             header_index = i
             break
+    if header_index is None:
+        return
 
     data_lines = new_content[header_index + 1:]
 
-    with open(filename, "a", newline="") as f:
+    with filename.open("a", encoding="utf-8") as f:
         for line in data_lines:
             f.write(line + "\n")
 
