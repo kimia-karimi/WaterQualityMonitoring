@@ -110,7 +110,7 @@ def main():
 
 
         #df = run_qartod(df, config)
-        df_wide = payload_to_dataframe(payload)
+        #df_wide = payload_to_dataframe(payload)
         
         qc_long, summary = run_qartod(
             df=df_wide,
