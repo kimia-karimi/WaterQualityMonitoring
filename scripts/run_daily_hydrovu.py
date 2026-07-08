@@ -48,7 +48,7 @@ def main():
             all_locations,location_id)
         
         filename = Path(f"{location_id}_all.csv")
-        if not filename.exists():
+        if not filename.exists() or filename.stat().st_size == 0:
              start = "2026-01-01T00:00:00Z"
         else:
              start = get_last_timestamp(filename)
@@ -72,7 +72,7 @@ def main():
             continue
         logging.info(
             "Using HydroVu ID %s for %s",
-            {location["id"]},
+            location["id"],
             location_id,
 )
 
@@ -90,7 +90,7 @@ def main():
     
         # ✅ generate CSV
         csv_buffer = rows_to_csv_payload(payload, default_depth_m=None)
-        print(type(csv_buffer))
+        
         # ✅ build filename
         #filename = build_output_filename(location_id, start, end)
         
@@ -118,6 +118,14 @@ def main():
             include_aggregate=True,
             verbose=True
             )
+        qc_long["time"] = pd.to_datetime(
+             qc_long["time"],
+             utc=True,
+             errors="coerce",
+             )
+        qc_long = qc_long.dropna(subset=["time"])
+
+
         qc_long = add_station_metadata_to_qc(
             qc_long=qc_long,
             location_id=location_id,
