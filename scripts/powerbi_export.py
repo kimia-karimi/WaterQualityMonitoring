@@ -88,16 +88,14 @@ def find_qartod_files(input_dir: Path) -> list:
     Expected pattern:
         *_qartod_long_all.csv
     """
+   files = sorted(input_dir.glob("*_qartod_long_all.csv"))
 
-    files = sorted(input_dir.glob("*_qartod_long_all.csv"))
-
-    if not files:
-        logging.warning(
+   if not files:
+      logging.warning(
             "No QARTOD long files found in %s using pattern *_qartod_long_all.csv",
             input_dir,
         )
-
-    return files
+   return files
 
 
 def read_qartod_file(path: Path) -> pd.DataFrame:
