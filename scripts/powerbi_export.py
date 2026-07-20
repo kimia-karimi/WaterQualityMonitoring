@@ -81,7 +81,8 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def find_qartod_files(input_dir: Path) -> list"""
+def find_qartod_files(input_dir: Path) -> list:
+   """
     Find station-level QARTOD long files.
 
     Expected pattern:
