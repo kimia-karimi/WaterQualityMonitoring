@@ -1,0 +1,5 @@
+qc_code,qc_label,qc_category,sort_order
+1,pass,good,1
+2,not_evaluated,neutral,2
+3,suspect,warning,3
+4,fail,critical,4

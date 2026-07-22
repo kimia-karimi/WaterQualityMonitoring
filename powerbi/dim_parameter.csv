@@ -1,0 +1,8 @@
+parameter,parameter_base,unit,parameter_group
+Actual Conductivity (µS/cm),Actual Conductivity,µS/cm,Conductivity
+Chl-a Fluorescence (RFU),Chl-a Fluorescence,RFU,Chlorophyll
+DO (mg/L),DO,mg/L,Dissolved Oxygen
+Salinity (psu),Salinity,psu,Salinity
+Specific Conductivity (µS/cm),Specific Conductivity,µS/cm,Conductivity
+Temperature (C),Temperature,C,Temperature
+pH (pH),pH,pH,pH
